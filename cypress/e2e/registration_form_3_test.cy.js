@@ -279,7 +279,7 @@ describe('Section 2: Tests for functional tests', () => {
 
 
 
-Assignment 7
+//Assignment 7
 
 /*
 BONUS TASK: add visual tests for registration form 3 - done
