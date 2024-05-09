@@ -279,8 +279,7 @@ describe('Section 2: Tests for functional tests', () => {
 
 
 
-
-
+Assignment 7
 
 /*
 BONUS TASK: add visual tests for registration form 3 - done
@@ -296,7 +295,7 @@ Task list:
  */
 
 /*
-BONUS TASK: add functional tests for registration form 3
+BONUS TASK: add functional tests for registration form 3 - done
 Task list:
 * Create second test suite for functional tests
 * Create tests to verify logic of the page:
