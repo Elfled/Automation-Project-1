@@ -1,20 +1,7 @@
 //Import necessary dependencies
 import { faker } from '@faker-js/faker'
 
-// Define the function for all mandatory fields + password (that should be mandatory, but is not)
-function fillMandatoryFields(userName, email, firstName, lastName, phoneNumber, password) {
-    cy.log('Filling mandatory fields with password:')
-    cy.get('#username').type(userName); 
-    cy.get('#email').type(email)
-    cy.get('[data-cy="name"]').type(firstName)
-    cy.get('[data-testid="lastNameTestId"]').type(lastName) 
-    cy.get('[data-testid="phoneNumberTestId"]').clear().type(phoneNumber) 
-    cy.get('#password').type(password) 
-    cy.get('#confirm').type(password) 
-}
-
-// Define the function for mandatory fields without password (as mandatory fields are on the form now)
-function fillMandatoryFieldsNoPassword(userName, email, firstName, lastName, phoneNumber) {
+function fillMandatoryFields(userName, email, firstName, lastName, phoneNumber) {
     cy.log('Filling mandatory fields without password:')
     cy.get('#username').type(userName) 
     cy.get('#email').type(email) 
@@ -23,7 +10,6 @@ function fillMandatoryFieldsNoPassword(userName, email, firstName, lastName, pho
     cy.get('[data-testid="phoneNumberTestId"]').clear().type(phoneNumber) 
 }
 
-//Variables data - random and static to be used in function as chosen
 const randomUserName = faker.internet.userName()// e.g. "MaaliMaalt"
 const randomEmail = faker.internet.email() // e.g., "maali.maalt@email.com"
 const randomFirstName = faker.person.firstName()// e.g. "Maali"
@@ -37,11 +23,9 @@ const staticPhoneNumber = '12345678'
 const randomPassword = faker.internet.password()
 let staticPassword = 'wordPass321'
 
-//Visit the page before each test
 beforeEach(() => {
     cy.visit('cypress/fixtures/registration_form_2.html')
 })
-// Take a full-page screenshot at the end of all tests
 afterEach(() => {
     cy.screenshot('Test result');
 })
@@ -53,19 +37,17 @@ describe('Section 1: Functional tests', () => {
 
     it('User can use only same both first and validation passwords', () => {
     
-    fillMandatoryFieldsNoPassword(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
+    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
 
-    // Type a different confirmation password to trigger an error
-        cy.get("input[name='password']").type(staticPassword);
-        cy.get('[name="confirm"]').clear().type(randomPassword);
-        cy.get('h2').contains('Password').click();
+        cy.get("input[name='password']").type(staticPassword)
+        cy.get('[name="confirm"]').clear().type(randomPassword)
+        cy.get('h2').contains('Password').click()
 
         cy.get('.submit_button').should('be.disabled')
         cy.get('#success_message').should('not.be.visible')
 
         cy.get('#password_error_message').should('be.visible').and('contain', 'Passwords do not match!')
 
-    // Correct the test so that the passwords match
         cy.get('[name="confirm"]').clear().type(staticPassword)
         cy.get('h2').contains('Password').click()
     
@@ -82,6 +64,8 @@ describe('Section 1: Functional tests', () => {
         cy.get('#vehicle2').click().should('be.checked')
         cy.get('#cars').select('Volvo')
         cy.get('#animal').select('Hippo')
+        cy.get("input[name='password']").type(staticPassword)
+        cy.get('[name="confirm"]').clear().type(staticPassword)
         cy.get('h2').contains('Password').click()
 
         cy.get('.submit_button').should('be.enabled')
@@ -92,7 +76,7 @@ describe('Section 1: Functional tests', () => {
 
     it('User can submit form with valid data and only mandatory fields added', ()=>{
    
-    fillMandatoryFieldsNoPassword(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
+    fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
         cy.get('h2').contains('Password').click()    
 
         cy.get('.submit_button').should('be.enabled')
@@ -102,14 +86,11 @@ describe('Section 1: Functional tests', () => {
 
     })
 
-   // Test for checking some mandatory field's absence (both functions can be used here and as example are used intermittently)
     it('User can not submit form with mandatory email field emtpy', ()=>{
         
-    // Call the function to fill in the mandatory fields + passwords
-        fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber, staticPassword)
+    fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
         cy.get('h2').contains('Password').click()
 
-    // Clear email field
         cy.get('#email').scrollIntoView()
         cy.get('#email').clear()
         cy.get('h2').contains('Password').click()       
@@ -120,12 +101,10 @@ describe('Section 1: Functional tests', () => {
     })
     
     it('User can not submit form with mandatory phone number field emtpy', ()=>{
-        
-    // Call the function to fill in the mandatory fields + passwords
-        fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber, randomPassword)
+
+    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber, randomPassword)
         cy.get('h2').contains('Password').click()
 
-    // Clear phone number field
         cy.get('[data-testid="phoneNumberTestId"]').scrollIntoView()
         cy.get('[data-testid="phoneNumberTestId"]').clear()
         cy.get('h2').contains('Password').click()       
@@ -136,12 +115,10 @@ describe('Section 1: Functional tests', () => {
     }) 
 
     it('User can not submit form with mandatory first name field emtpy', ()=>{
-        
-    // Call the function to fill in the mandatory fields + passwords
-        fillMandatoryFieldsNoPassword(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
+     
+    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
         cy.get('h2').contains('Password').click()
 
-    // Clear first name field
         cy.get('input[name="name"]').scrollIntoView()
         cy.get('input[name="name"]').clear()
         cy.get('h2').contains('Password').click()       
@@ -152,12 +129,10 @@ describe('Section 1: Functional tests', () => {
     }) 
 
     it('User can not submit form with mandatory last name field emtpy', ()=>{
-        
-    // Call the function to fill in the mandatory fields
-        fillMandatoryFieldsNoPassword(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
+
+    fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
         cy.get('h2').contains('Password').click()
 
-    // Clear last name field
         cy.get('#lastName').scrollIntoView()
         cy.get('#lastName').clear()
         cy.get('h2').contains('Password').click()       
@@ -168,12 +143,10 @@ describe('Section 1: Functional tests', () => {
     })     
 
     it('User can not submit form with mandatory username field emtpy', ()=>{
-        
-    // Call the function to fill in the mandatory fields
-        fillMandatoryFieldsNoPassword(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
+    
+    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
         cy.get('h2').contains('Password').click()
 
-    // Clear username field
         cy.get('#username').scrollIntoView()
         cy.get('#username').clear()
         cy.get('h2').contains('Password').click()       
