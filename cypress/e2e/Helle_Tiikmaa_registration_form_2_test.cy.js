@@ -64,8 +64,8 @@ describe('Section 1: Functional tests', () => {
         cy.get('#vehicle2').click().should('be.checked')
         cy.get('#cars').select('Volvo')
         cy.get('#animal').select('Hippo')
-        cy.get("input[name='password']").type(staticPassword)
-        cy.get('[name="confirm"]').clear().type(staticPassword)
+        cy.get("input[name='password']").type(randomPassword)
+        cy.get('[name="confirm"]').clear().type(randomPassword)
         cy.get('h2').contains('Password').click()
 
         cy.get('.submit_button').should('be.enabled')
@@ -86,76 +86,32 @@ describe('Section 1: Functional tests', () => {
 
     })
 
-    it('User can not submit form with mandatory email field emtpy', ()=>{
-        
-    fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
-        cy.get('h2').contains('Password').click()
+    it('User cannot submit form with any mandatory field empty', () => {
+        const mandatoryFields = [
+            { selector: '#email', description: 'email field' },
+            { selector: '[data-testid="phoneNumberTestId"]', description: 'phone number field' },
+            { selector: '[data-cy="name"]', description: 'first name field' },
+            { selector: '[data-testid="lastNameTestId"]', description: 'last name field' },
+            { selector: '#username', description: 'username field' },
+        ]
+      
+        mandatoryFields.forEach((field) => {
+          
+            fillMandatoryFields(
+                field.selector === '#username' ? randomUserName : staticUserName,
+                field.selector === '#email' ? randomEmail : staticEmail,
+                field.selector === '[data-cy="name"]' ? randomFirstName : staticFirstName,
+                field.selector === '[data-testid="lastNameTestId"]' ? randomLastName : staticLastName,
+                field.selector === '[data-testid="phoneNumberTestId"]' ? randomPhoneNumber : staticPhoneNumber
+            )
 
-        cy.get('#email').scrollIntoView()
-        cy.get('#email').clear()
-        cy.get('h2').contains('Password').click()       
-
-        cy.get('.submit_button').should('be.disabled')
-        cy.get('#success_message').should('not.be.visible')
-
+            cy.get(field.selector).clear()
+            cy.get('h2').contains('Password').click()
+            cy.get('.submit_button').should('be.disabled')
+            cy.get('#success_message').should('not.be.visible')
+            cy.log(`Tested form submission with empty ${field.description}`)
+        })
     })
-    
-    it('User can not submit form with mandatory phone number field emtpy', ()=>{
-
-    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber, randomPassword)
-        cy.get('h2').contains('Password').click()
-
-        cy.get('[data-testid="phoneNumberTestId"]').scrollIntoView()
-        cy.get('[data-testid="phoneNumberTestId"]').clear()
-        cy.get('h2').contains('Password').click()       
-
-        cy.get('.submit_button').should('be.disabled')
-        cy.get('#success_message').should('not.be.visible')
-
-    }) 
-
-    it('User can not submit form with mandatory first name field emtpy', ()=>{
-     
-    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
-        cy.get('h2').contains('Password').click()
-
-        cy.get('input[name="name"]').scrollIntoView()
-        cy.get('input[name="name"]').clear()
-        cy.get('h2').contains('Password').click()       
-
-        cy.get('.submit_button').should('be.disabled')
-        cy.get('#success_message').should('not.be.visible')
-
-    }) 
-
-    it('User can not submit form with mandatory last name field emtpy', ()=>{
-
-    fillMandatoryFields(staticUserName, staticEmail, staticFirstName, staticLastName, staticPhoneNumber)
-        cy.get('h2').contains('Password').click()
-
-        cy.get('#lastName').scrollIntoView()
-        cy.get('#lastName').clear()
-        cy.get('h2').contains('Password').click()       
-
-        cy.get('.submit_button').should('be.disabled')
-        cy.get('#success_message').should('not.be.visible')
-
-    })     
-
-    it('User can not submit form with mandatory username field emtpy', ()=>{
-    
-    fillMandatoryFields(randomUserName, randomEmail, randomFirstName, randomLastName, randomPhoneNumber)
-        cy.get('h2').contains('Password').click()
-
-        cy.get('#username').scrollIntoView()
-        cy.get('#username').clear()
-        cy.get('h2').contains('Password').click()       
-
-        cy.get('.submit_button').should('be.disabled')
-        cy.get('#success_message').should('not.be.visible')
-
-    })
-
 })
 
 /*
@@ -273,4 +229,7 @@ describe('Section 2: Visual tests', () => {
         })
 
     })
+    
 })
+
+
